@@ -14,7 +14,7 @@ namespace ImageQuantization
         static int imageHeight = Buffer.GetLength(0);
         static int imageWidth = Buffer.GetLength(1);
         static int maxDistinctNum = Math.Max(imageHeight, imageWidth);
-        static Dictionary<string, KeyValuePair<string, double>> distinctColors = new Dictionary<string, KeyValuePair<string, double>>(imageHeight*imageWidth);
+        static Dictionary<string, KeyValuePair<string, double>> distinctColors = new Dictionary<string, KeyValuePair<string, double>>(maxDistinctNum);
         static Dictionary<string, RGBPixel> distinctHelper = new Dictionary<string, RGBPixel>(imageWidth*imageHeight);
         static Dictionary<string, bool> visited = new Dictionary<string, bool>();
         static string color;
