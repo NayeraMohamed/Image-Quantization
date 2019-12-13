@@ -1,0 +1,47 @@
+    public static double GetMinimumSpanningTree()
+        {
+
+            int j;
+            int next = 0;
+           
+            for (int i = 0; i < distinctColors.Count - 1; i++)
+            {
+                visited[next] = true;
+                for (j = 0; j < distinctColors.Count; j++)
+                {
+                    if (next == j)
+                    {
+                        continue;
+                    }
+                    if (visited[j] == true)
+                    {
+                        continue;
+                    }
+                    double distance = Math.Sqrt(Math.Pow((distinctColors.ElementAt(next).Key.red - distinctColors.ElementAt(j).Key.red), 2)
+                                              + Math.Pow((distinctColors.ElementAt(next).Key.blue - distinctColors.ElementAt(j).Key.blue), 2)
+                                              + Math.Pow((distinctColors.ElementAt(next).Key.green - distinctColors.ElementAt(j).Key.green), 2));
+                    if (distinctColors[distinctColors.ElementAt(j).Key].Value > distance)
+                    {
+                       
+                    distinctColors[distinctColors.ElementAt(j).Key] = new KeyValuePair<RGBPixel, double>(distinctColors.ElementAt(next).Key, distance);
+                    
+                    }
+
+                }
+                   
+                double minedge = double.MaxValue;
+                for (int k = 0; k < distinctColors.Count; k++ )
+                {
+                    if(distinctColors.ElementAt(k).Value.Value < minedge && !visited[k])
+                    {
+                        minedge = distinctColors.ElementAt(k).Value.Value;
+                        next = k;
+                    }
+                }
+
+                MST_Sum += minedge;
+
+            }
+           
+                return MST_Sum;
+        }
