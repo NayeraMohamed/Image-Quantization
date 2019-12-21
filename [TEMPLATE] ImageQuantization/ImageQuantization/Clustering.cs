@@ -12,7 +12,10 @@ namespace ImageQuantization
         static Dictionary<string, KeyValuePair<string, double>> MSTree = MST.GetMST();
         static Dictionary<string, RGBPixel> MSTHelper = MST.GetMSTHelper();
         
-
+         // To be seen by DFS fn && pelletteGeneration fn
+        static Stack<string> clusterColors;
+        static Dictionary<string, bool> discovered = new Dictionary<string, bool>(noDistinctColors);
+        
         static int DescendingOrder(KeyValuePair<double, string> node1, KeyValuePair<double, string> node2)
         {
             return node2.Key.CompareTo(node1.Key); //for descending order
@@ -40,6 +43,79 @@ namespace ImageQuantization
                 string source = edges[i].Value;
                 MSTree.Remove(source);
             }
+        }
+        public static List<RGBPixel> paletteGeneration()
+        {
+            List<RGBPixel> pallette  = new List<RGBPixel>(); // initialize the size by K clusters 
+             
+
+            // initialization of the discovered list by false
+            List<KeyValuePair<string, KeyValuePair<string, double>>> clusters = MSTree.ToList();
+            foreach (KeyValuePair<string, KeyValuePair<string, double>> node in clusters)
+            {
+                string key = node.Key;
+                bool visited = false;
+                discovered.Add(key, visited);
+            }
+
+
+            // traversing each cluster
+            List<KeyValuePair<string, bool>> vertices = discovered.ToList();
+            foreach (KeyValuePair<string, bool> vertex in vertices)
+            {
+                if (vertex.Value == false)
+                {
+                    clusterColors = new Stack<string>();
+                    
+                    int clusterRed = 0;
+                    int clusterGreen = 0;
+                    int clusterBlue = 0;
+
+                    DFS(vertex.Key, clusterRed, clusterGreen, clusterBlue);
+
+                    //  the average ??
+                    RGBPixel newColor;
+                    int clusterNodesCount = clusterColors.Count;  // indicates # Distinct colors in this cluster 
+                    newColor.red = (byte)(clusterRed / clusterNodesCount);
+                    newColor.blue = (byte)(clusterBlue / clusterNodesCount);
+                    newColor.green = (byte)(clusterGreen / clusterNodesCount);
+                    pallette.Add(newColor);
+
+
+                    // to extract the stack values before the next loop 
+                    //
+                    //
+                }
+
+                else
+                    continue;
+
+
+            }
+            return pallette;
+        }
+
+        public static void DFS(string S, int clusterRed, int clusterGreen, int clusterBlue)
+        {
+            discovered[S] = true;
+            clusterColors.Push(S);
+         
+
+            byte red = MSTHelper[S].red;
+            byte green = MSTHelper[S].green;
+            byte blue = MSTHelper[S].blue;
+
+            clusterRed += red;
+            clusterGreen += green;
+            clusterBlue += blue;
+
+            
+            string adjacentNode = MSTree[S].Key;
+            if (discovered.ContainsKey(adjacentNode) && discovered[adjacentNode] == false)
+            {
+                DFS(adjacentNode, clusterRed, clusterGreen, clusterBlue);
+            }
+
         }
     }
 }
