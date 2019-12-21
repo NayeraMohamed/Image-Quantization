@@ -11,7 +11,7 @@ namespace ImageQuantization
         static int imageHeight = Buffer.GetLength(0);
         static int imageWidth = Buffer.GetLength(1);
 
-        static int maxDistinctNum = Math.Max(imageHeight, imageWidth); //max no of distinct colors that can be found in matrix
+        static int maxDistinctNum = imageHeight * imageWidth; //max no of distinct colors that can be found in matrix
         /*All Dictionaries initialized with maxDistinctNum as it is the max no of elements that can be added 
         to the Dictionary (Dictionary capacity) to avoid O(N) complexity when adding new elements*/
         //distinctColors > Dictionary that contains MinSpanningTree
