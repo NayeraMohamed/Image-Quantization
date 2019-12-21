@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,14 +11,15 @@ namespace ImageQuantization
         static double MST_Sum = MST.FindMinimumSpanningTree();
         static Dictionary<string, KeyValuePair<string, double>> MSTree = MST.GetMST();
         static Dictionary<string, RGBPixel> MSTHelper = MST.GetMSTHelper();
-        static List<KeyValuePair<double, string>> edges = new List<KeyValuePair<double, string>>(MSTree.Count); //need to che k
+        
 
         static int DescendingOrder(KeyValuePair<double, string> node1, KeyValuePair<double, string> node2)
         {
             return node2.Key.CompareTo(node1.Key); //for descending order
         }
-        static void ExtractMSTEdges()
+        static List<KeyValuePair<double, string>> ExtractMSTEdges()
         {
+            List<KeyValuePair<double, string>> edges = new List<KeyValuePair<double, string>>(MSTree.Count); //need to che k
             List<KeyValuePair<string, KeyValuePair<string, double>>> vertices = MSTree.ToList();
             //for loop approaches an O(V) operation, V is the number of vertices
             foreach (KeyValuePair<string, KeyValuePair<string, double>> node in vertices)
@@ -29,10 +30,11 @@ namespace ImageQuantization
                 edges.Add(edge);
             }
             edges.Sort(DescendingOrder);
+            return edges;
         }
         public static void ProduceKClusters(int k)
         {
-            ExtractMSTEdges();
+            List<KeyValuePair<double, string>> edges = ExtractMSTEdges();
             for(int i = 0; i < k - 1; ++i)
             {
                 string source = edges[i].Value;
