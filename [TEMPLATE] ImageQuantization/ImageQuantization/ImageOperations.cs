@@ -89,7 +89,7 @@ namespace ImageQuantization
                 original_bm.UnlockBits(bmd);
             }
             ImageArray = Buffer;
-            Clustering.ProduceKClusters(3);
+            Buffer = MST.dispImage();
             return Buffer;
         }
         

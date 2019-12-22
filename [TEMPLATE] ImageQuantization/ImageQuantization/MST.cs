@@ -127,5 +127,26 @@ namespace ImageQuantization
         {
             return distinctHelper;
         }
+
+        public static RGBPixel[,] dispImage()
+        {
+            Clustering.paletteGeneration();
+            RGBPixel[,] modifiedImage = Buffer;
+            //Outer for loop approaches an O(N) operation, N is the image height
+            for (int i = 0; i < imageHeight; ++i)
+            {
+                //Inner for loop approaches an O(N) operation, N is the image width
+                for (int j = 0; j < imageWidth; ++j)
+                {
+                    string color = //ToString() approaches an O(1) operation
+                                  (Buffer[i, j].red).ToString()
+                                  + (Buffer[i, j].green).ToString()
+                                  + (Buffer[i, j].blue).ToString();
+                    RGBPixel newColor = Clustering.represntativeColor[color];
+                    modifiedImage[i, j] = newColor;
+                }
+            }
+            return modifiedImage;
+        }
     }
 }
