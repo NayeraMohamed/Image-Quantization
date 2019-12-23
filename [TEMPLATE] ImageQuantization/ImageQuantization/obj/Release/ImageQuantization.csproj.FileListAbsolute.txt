@@ -6,3 +6,10 @@ D:\College\Junior\First Semster\Algorithms\Project\Image Quantization Startup Co
 D:\College\Junior\First Semster\Algorithms\Project\Image Quantization Startup Code\[TEMPLATE] ImageQuantization\ImageQuantization\obj\Release\ImageQuantization.exe
 D:\College\Junior\First Semster\Algorithms\Project\Image Quantization Startup Code\[TEMPLATE] ImageQuantization\ImageQuantization\obj\Release\ImageQuantization.pdb
 D:\College\Junior\First Semster\Algorithms\Project\Image Quantization Startup Code\[TEMPLATE] ImageQuantization\ImageQuantization\obj\Release\ImageQuantization.csprojResolveAssemblyReference.cache
+C:\Users\Mubarak\Downloads\Image-Quantization-master\[TEMPLATE] ImageQuantization\ImageQuantization\obj\Release\ImageQuantization.exe
+C:\Users\Mubarak\Downloads\Image-Quantization-master\[TEMPLATE] ImageQuantization\ImageQuantization\obj\Release\ImageQuantization.pdb
+C:\Users\Mubarak\Downloads\Image-Quantization-master\[TEMPLATE] ImageQuantization\ImageQuantization\bin\Release\ImageQuantization.exe
+C:\Users\Mubarak\Downloads\Image-Quantization-master\[TEMPLATE] ImageQuantization\ImageQuantization\bin\Release\ImageQuantization.pdb
+C:\Users\Mubarak\Downloads\Image-Quantization-master\[TEMPLATE] ImageQuantization\ImageQuantization\obj\Release\ImageQuantization.MainForm.resources
+C:\Users\Mubarak\Downloads\Image-Quantization-master\[TEMPLATE] ImageQuantization\ImageQuantization\obj\Release\ImageQuantization.Properties.Resources.resources
+C:\Users\Mubarak\Downloads\Image-Quantization-master\[TEMPLATE] ImageQuantization\ImageQuantization\obj\Release\ImageQuantization.csproj.GenerateResource.Cache

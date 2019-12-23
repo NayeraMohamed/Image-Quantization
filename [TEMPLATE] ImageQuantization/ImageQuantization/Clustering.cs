@@ -15,7 +15,7 @@ namespace ImageQuantization
 
         // To be seen by DFS fn && pelletteGeneration fn
         static Stack<string> clusterColors = new Stack<string>(noDistinctColors);
-        static Dictionary<string, bool> discovered = MST.visited;
+        static Dictionary<string, bool> discovered = new Dictionary<string, bool>(noDistinctColors);
         //agdd fkra
         static Dictionary<string, List<string>> clusteredGraph = new Dictionary<string, List<string>>(noDistinctColors);
         static int DescendingOrder(KeyValuePair<double, string> node1, KeyValuePair<double, string> node2)
@@ -41,7 +41,7 @@ namespace ImageQuantization
         {
             List<KeyValuePair<double, string>> edges = ExtractMSTEdges();
             //ConvertDirectedMSTtoUndirected(edges);
-            for (int i = k; i < edges.Count; ++i) //k*D///kda kolo d
+            for (int i = k - 1; i < edges.Count; ++i) //k*D///kda kolo d
             {
                 string node1 = edges[i].Value;
                 string node2 = MSTree[node1].Key;
@@ -68,8 +68,8 @@ namespace ImageQuantization
         }
         public static List<RGBPixel> paletteGeneration()
         {
-            int k = 1737;
-            ProduceKClusters(k);   
+            int k = 2284;
+            int noClusters = ProduceKClusters(k);   
             List<RGBPixel> pallette = new List<RGBPixel>(k); // initialize the size by clus
 
             // initialization of the discovered list by false
@@ -77,7 +77,8 @@ namespace ImageQuantization
             foreach (KeyValuePair<string, List<string>> node in clusters) //D
             {
                 string key = node.Key;
-                discovered[key] = false; //o1
+                discovered.Add(key, false); //o1
+                ///represntativeColor.Add(key, new RGBPixel()); //o1
             }
             // traversing each cluster
             foreach (KeyValuePair<string, List<string>> vertex in clusters) //E+V //V
@@ -100,6 +101,7 @@ namespace ImageQuantization
                     newColor.green = (byte)(clusterGreen / clusterNodesCount);
                     pallette.Add(newColor); //1
 
+
                     // to extract the stack values before the next loop 
                     while (clusterColors.Count != 0)//anaa //d max
                     {
@@ -107,6 +109,7 @@ namespace ImageQuantization
                         represntativeColor.Add(basicColor, newColor); //o1        //1              
                     }
                 }
+
                 else
                 {
                     continue;
@@ -119,6 +122,7 @@ namespace ImageQuantization
         {
             discovered[S] = true;
             clusterColors.Push(S);
+
 
             byte red = MSTHelper[S].red;
             byte green = MSTHelper[S].green;
@@ -135,7 +139,8 @@ namespace ImageQuantization
                 {
                     DFS(node, ref clusterRed, ref clusterGreen, ref clusterBlue);
                 }
-            }         
+            }
+            
         }
     }
 }
