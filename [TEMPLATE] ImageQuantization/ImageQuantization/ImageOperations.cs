@@ -89,7 +89,7 @@ namespace ImageQuantization
                 original_bm.UnlockBits(bmd);
             }
             ImageArray = Buffer;
-            Buffer = MST.dispImage();
+            //Buffer = MST.dispImage();
             return Buffer;
         }
         
@@ -161,7 +161,7 @@ namespace ImageQuantization
        /// <returns>smoothed color image</returns>
         public static RGBPixel[,] GaussianFilter1D(RGBPixel[,] ImageMatrix, int filterSize, double sigma)
         {
-            int Height = GetHeight(ImageMatrix);
+           /* int Height = GetHeight(ImageMatrix);
             int Width = GetWidth(ImageMatrix);
 
             RGBPixelD[,] VerFiltered = new RGBPixelD[Height, Width];
@@ -241,7 +241,8 @@ namespace ImageQuantization
                     Filtered[i, j].blue = (byte)Sum.blue;
                 }
 
-            return Filtered;
+            return Filtered;*/
+            return MST.dispImage(); 
         }
         public static RGBPixel[,] GetImage()
         {

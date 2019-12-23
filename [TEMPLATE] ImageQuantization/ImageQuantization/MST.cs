@@ -19,7 +19,11 @@ namespace ImageQuantization
         //distinctHelper > Helper Dictionary for keeping struct values concatenated as string (Key) to increase hashFunction operations
         static Dictionary<string, RGBPixel> distinctHelper = new Dictionary<string, RGBPixel>(maxDistinctNum);
         //visited > Dictionary to check visited nodes in MinSpnningTree
-        static Dictionary<string, bool> visited = new Dictionary<string, bool>(maxDistinctNum);
+        public static Dictionary<string, bool> visited = new Dictionary<string, bool>(maxDistinctNum);
+
+        //
+        static KeyValuePair<string, KeyValuePair<string, double>> minVertix;
+        static string color;
 
         static int noDistinctColors = 0; //actual no of distinct colors, calculated in GetDistinctColors() function
         static double MST_Sum = 0;
@@ -32,30 +36,38 @@ namespace ImageQuantization
         /// Space Complexity: N, N is the image width (or height)
         public static int FindDistinctColors()
         {
+            //StringBuilder sb = new StringBuilder(9);
             //Outer for loop approaches an O(N) operation, N is the image height
             for (int i = 0; i < imageHeight; ++i)
             {
                 //Inner for loop approaches an O(N) operation, N is the image width
                 for (int j = 0; j < imageWidth; ++j)
                 {
-                    string color = //ToString() approaches an O(1) operation
-                                  (Buffer[i, j].red).ToString()
-                                  + (Buffer[i, j].green).ToString()
-                                  + (Buffer[i, j].blue).ToString();
+                    RGBPixel node = Buffer[i, j]; //O(1)
+                    /*sb.Append(Buffer[i, j].red).ToString();
+                    sb.Append(Buffer[i, j].green).ToString();
+                    sb.Append(Buffer[i, j].blue).ToString();*/
+                    color = //ToString() approaches an O(1) operation
+                       // sb.ToString();
+                                  (node.red).ToString()
+                                  + (node.green).ToString()
+                                  + (node.blue).ToString();
+                    //sb.Clear();
                     if (!distinctHelper.ContainsKey(color)) //ContainsKey() approaches an O(1) operation
                     {
-                        RGBPixel node = Buffer[i, j]; //O(1)
-
                         //Add() approaches an O(1) operation if Count is less than the capacity,
                         //guaranteed to run in O(1) as map is initialized with max capacity
                         distinctColors.Add(color, new KeyValuePair<string, double>("", double.MaxValue));  //node initialized with max distance
                         distinctHelper.Add(color, node);
                         visited.Add(color, false); //node initially not visited
 
-                        noDistinctColors++; //O(1)
+                        noDistinctColors++; //O(1) 
                     }
                 }
             }
+            //
+            minVertix = new KeyValuePair<string, KeyValuePair<string, double>>(color, new KeyValuePair<string, double>("", double.MaxValue));
+            //
             return noDistinctColors; //O(1)
         }
 
@@ -68,19 +80,25 @@ namespace ImageQuantization
         /// E is the no of Edges in graph, approaches V^2 as it is a dense graph
         public static double FindMinimumSpanningTree()
         {
+            //
+            string v;
+            double minEdge;
+            KeyValuePair<string, double> edge = new KeyValuePair<string, double>();
+            //
             //the minimum node by which we start calculating min from,
             //initialized with source vertix where we start MST from
-            KeyValuePair<string, KeyValuePair<string, double>> minVertix = distinctColors.First(); //O(1)
+            //minVertix = distinctColors.First(); //O(1)
 
             //currentMin >  to get the minimum vertix at each iteration
             KeyValuePair<string, KeyValuePair<string, double>> currentMin = new KeyValuePair<string, KeyValuePair<string, double>>();
-
+            RGBPixel nodeColor, minVertexColor;
             //Outer for loop approaches an O(V) operation, V is the number of vertices,
             //each iteration we relax a vertix
             for (int i = 0; i < distinctColors.Count - 1; i++)
             {
-                visited[minVertix.Key] = true;
-                double minEdge = double.MaxValue;
+                v = minVertix.Key;
+                visited[v] = true;
+                minEdge = double.MaxValue;
 
                 //ToList() > Converts distinctColors Dictionary to List to be able to iterate over it,
                 //approaches an O(V) operation, V is the number of vertices
@@ -89,35 +107,42 @@ namespace ImageQuantization
                 //Inner for loop approaches an O(V) operation, V is the number of vertices
                 foreach (KeyValuePair<string, KeyValuePair<string, double>> node in vertices)
                 {
+                    //trial succ
+                    nodeColor = distinctHelper[node.Key];
+                    minVertexColor = distinctHelper[minVertix.Key];
+                    //
                     //check whether the distance must be calculated or not
                     //continue if node is already visited or it is the same node where the min distance is calc relative to it
-                    if (((distinctHelper[node.Key].red == distinctHelper[minVertix.Key].red) &&
-                        (distinctHelper[node.Key].blue == distinctHelper[minVertix.Key].red) &&
-                        (distinctHelper[node.Key].green == distinctHelper[minVertix.Key].green))
-                        || visited[node.Key] == true)
+                    if (((nodeColor.red == minVertexColor.red) &&
+                        (nodeColor.blue == minVertexColor.red) &&
+                        (nodeColor.green == minVertexColor.green))
+                        || visited[node.Key])
                     {
                         continue;
                     }
                     //Pow() approaches O(1) operation as O(log2(2)) = 1, Sqrt() approaches O(1) operation
-                    double distance = Math.Sqrt((distinctHelper[minVertix.Key].red - distinctHelper[node.Key].red) * (distinctHelper[minVertix.Key].red - distinctHelper[node.Key].red)
-                                              + (distinctHelper[minVertix.Key].blue - distinctHelper[node.Key].blue) * (distinctHelper[minVertix.Key].blue - distinctHelper[node.Key].blue)
-                                              + (distinctHelper[minVertix.Key].green - distinctHelper[node.Key].green) * (distinctHelper[minVertix.Key].green - distinctHelper[node.Key].green));
+                    double distance = Math.Sqrt((minVertexColor.red - nodeColor.red) * (minVertexColor.red - nodeColor.red)
+                                              + (minVertexColor.blue - nodeColor.blue) * (minVertexColor.blue - nodeColor.blue)
+                                              + (minVertexColor.green - nodeColor.green) * (minVertexColor.green - nodeColor.green));
+                    //
+                    edge = distinctColors[node.Key];
+                    //
                     //update distance value if less distance is calculated
-                    if (distinctColors[node.Key].Value > distance)
+                    if (edge.Value > distance)
                     {
                         distinctColors[node.Key] = new KeyValuePair<string, double>(minVertix.Key, distance);
                     }
-                    //finding cureent min in inner loop relative to chosen vertex in outer loop
+                    //finding current min in inner loop relative to chosen vertex in outer loop
                     if (distinctColors[node.Key].Value < minEdge)
                     {
-                        minEdge = distinctColors[node.Key].Value;
+                        minEdge = edge.Value;
                         currentMin = node;
                     }
                 }
                 minVertix = currentMin;
                 MST_Sum += minEdge;
             }
-            distinctColors.Remove(distinctColors.First().Key);
+            //distinctColors.Remove(distinctColors.First().Key);
             return MST_Sum; //O(1)
         }
         public static Dictionary<string, KeyValuePair<string, double>> GetMST()
