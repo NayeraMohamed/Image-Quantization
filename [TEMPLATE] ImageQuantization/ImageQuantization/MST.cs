@@ -99,9 +99,9 @@ namespace ImageQuantization
                         continue;
                     }
                     //Pow() approaches O(1) operation as O(log2(2)) = 1, Sqrt() approaches O(1) operation
-                    double distance = Math.Sqrt(Math.Pow((distinctHelper[minVertix.Key].red - distinctHelper[node.Key].red), 2)
-                                              + Math.Pow((distinctHelper[minVertix.Key].blue - distinctHelper[node.Key].blue), 2)
-                                              + Math.Pow((distinctHelper[minVertix.Key].green - distinctHelper[node.Key].green), 2));
+                    double distance = Math.Sqrt((distinctHelper[minVertix.Key].red - distinctHelper[node.Key].red) * (distinctHelper[minVertix.Key].red - distinctHelper[node.Key].red)
+                                              + (distinctHelper[minVertix.Key].blue - distinctHelper[node.Key].blue) * (distinctHelper[minVertix.Key].blue - distinctHelper[node.Key].blue)
+                                              + (distinctHelper[minVertix.Key].green - distinctHelper[node.Key].green) * (distinctHelper[minVertix.Key].green - distinctHelper[node.Key].green));
                     //update distance value if less distance is calculated
                     if (distinctColors[node.Key].Value > distance)
                     {
@@ -117,6 +117,7 @@ namespace ImageQuantization
                 minVertix = currentMin;
                 MST_Sum += minEdge;
             }
+            distinctColors.Remove(distinctColors.First().Key);
             return MST_Sum; //O(1)
         }
         public static Dictionary<string, KeyValuePair<string, double>> GetMST()
