@@ -27,7 +27,7 @@ namespace ImageQuantization
     /// </summary>
     public class ImageOperations
     {
-        static RGBPixel[,] ImageArray;
+        public static RGBPixel[,] ImageArray;
         /// <summary>
         /// Open an image and load it into 2D array of colors (size: Height x Width)
         /// </summary>
@@ -89,6 +89,7 @@ namespace ImageQuantization
                 original_bm.UnlockBits(bmd);
             }
             ImageArray = Buffer;
+            
             //Buffer = MST.dispImage();
             return Buffer;
         }
@@ -242,6 +243,8 @@ namespace ImageQuantization
                 }
 
             return Filtered;*/
+            MST.FindDistinctColors();
+            MST.FindMinimumSpanningTree();
             return MST.dispImage(); 
         }
         public static RGBPixel[,] GetImage()

@@ -15,19 +15,19 @@ namespace ImageQuantization
         /*All Dictionaries initialized with maxDistinctNum as it is the max no of elements that can be added 
         to the Dictionary (Dictionary capacity) to avoid O(N) complexity when adding new elements*/
         //distinctColors > Dictionary that contains MinSpanningTree
-        static Dictionary<string, KeyValuePair<string, double>> distinctColors = new Dictionary<string, KeyValuePair<string, double>>(maxDistinctNum);
+        public static Dictionary<string, KeyValuePair<string, double>> distinctColors = new Dictionary<string, KeyValuePair<string, double>>(maxDistinctNum);
         //distinctHelper > Helper Dictionary for keeping struct values concatenated as string (Key) to increase hashFunction operations
-        static Dictionary<string, RGBPixel> distinctHelper = new Dictionary<string, RGBPixel>(maxDistinctNum);
+        public static Dictionary<string, RGBPixel> distinctHelper = new Dictionary<string, RGBPixel>(maxDistinctNum);
         //visited > Dictionary to check visited nodes in MinSpnningTree
         public static Dictionary<string, bool> visited = new Dictionary<string, bool>(maxDistinctNum);
 
         //
         static KeyValuePair<string, KeyValuePair<string, double>> minVertix;
         static string color;
-        static List<KeyValuePair<double, string>> edges = new List<KeyValuePair<double, string>>(noDistinctColors); // all edges in graph
+        public static List<KeyValuePair<double, string>> edges = new List<KeyValuePair<double, string>>(noDistinctColors); // all edges in graph
         //
-        static int noDistinctColors = 0; //actual no of distinct colors, calculated in GetDistinctColors() function
-        static double MST_Sum = 0;
+        public static int noDistinctColors = 0; //actual no of distinct colors, calculated in GetDistinctColors() function
+        public static double MST_Sum = 0;
 
         /// <summary>
         /// Gets all DistinctColors from 2D array and fills Dictionary of MST with all of them

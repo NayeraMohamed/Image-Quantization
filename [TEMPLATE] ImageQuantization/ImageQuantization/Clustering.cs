@@ -7,16 +7,16 @@ namespace ImageQuantization
 {
     class Clustering
     {
-        static int noDistinctColors = MST.FindDistinctColors();
-        static double MST_Sum = MST.FindMinimumSpanningTree();
+        //static int noDistinctColors = MST.FindDistinctColors();
+        //static double MST_Sum = MST.FindMinimumSpanningTree();
         static Dictionary<string, KeyValuePair<string, double>> MSTree = MST.GetMST();
         static Dictionary<string, RGBPixel> MSTHelper = MST.GetMSTHelper();
-        public static Dictionary<string, RGBPixel> represntativeColor = new Dictionary<string, RGBPixel>(noDistinctColors);//each original color as key and value as rep color ofeach cluster
+        public static Dictionary<string, RGBPixel> represntativeColor = new Dictionary<string, RGBPixel>(MST.noDistinctColors);//each original color as key and value as rep color ofeach cluster
 
         // To be seen by DFS and DFSHelper fn
-        static Stack<string> clusterColors = new Stack<string>(noDistinctColors); //for holding nodes in each cluster separately in dfs
+        static Stack<string> clusterColors = new Stack<string>(MST.noDistinctColors); //for holding nodes in each cluster separately in dfs
         static Dictionary<string, bool> discovered = MST.visited; //to check in dfs if node was visited
-        static Dictionary<string, List<string>> clusteredGraph = new Dictionary<string, List<string>>(noDistinctColors); //graph after removal of k - 1 edges, contains clusters
+        static Dictionary<string, List<string>> clusteredGraph = new Dictionary<string, List<string>>(MST.noDistinctColors); //graph after removal of k - 1 edges, contains clusters
         
         public static void ProduceKClusters(int k)
         {
@@ -29,11 +29,11 @@ namespace ImageQuantization
                 string node2 = MSTree[node1].Key;
                 if (!clusteredGraph.ContainsKey(node1))//1
                 {
-                    clusteredGraph.Add(node1, new List<string>(noDistinctColors)); //1             
+                    clusteredGraph.Add(node1, new List<string>(MST.noDistinctColors)); //1             
                 }
                 if (!clusteredGraph.ContainsKey(node2))//1
                 {
-                    clusteredGraph.Add(node2, new List<string>(noDistinctColors));//1
+                    clusteredGraph.Add(node2, new List<string>(MST.noDistinctColors));//1
                 }
                 clusteredGraph[node1].Add(node2);//1
                 clusteredGraph[node2].Add(node1);//1
