@@ -24,7 +24,8 @@ namespace ImageQuantization
         //
         static KeyValuePair<string, KeyValuePair<string, double>> minVertix;
         static string color;
-
+        static List<KeyValuePair<double, string>> edges = new List<KeyValuePair<double, string>>(noDistinctColors); // all edges in graph
+        //
         static int noDistinctColors = 0; //actual no of distinct colors, calculated in GetDistinctColors() function
         static double MST_Sum = 0;
 
@@ -131,9 +132,20 @@ namespace ImageQuantization
                     }
                 }
                 minVertix = currentMin;
+                KeyValuePair<double, string> MSTEdge = new KeyValuePair<double, string>(minEdge, minVertix.Key);//1
+                edges.Add(MSTEdge);//1
                 MST_Sum += minEdge;
             }
+            edges.Sort(DescendingOrder); //V lg V
             return MST_Sum; //O(1)
+        }
+        static int DescendingOrder(KeyValuePair<double, string> node1, KeyValuePair<double, string> node2)
+        {
+            return node2.Key.CompareTo(node1.Key); //for descending order
+        }
+        public static List<KeyValuePair<double, string>> GetEdges()
+        {
+            return edges;
         }
         public static Dictionary<string, KeyValuePair<string, double>> GetMST()
         {

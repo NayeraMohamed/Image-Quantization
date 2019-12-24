@@ -17,31 +17,13 @@ namespace ImageQuantization
         static Stack<string> clusterColors = new Stack<string>(noDistinctColors); //for holding nodes in each cluster separately in dfs
         static Dictionary<string, bool> discovered = MST.visited; //to check in dfs if node was visited
         static Dictionary<string, List<string>> clusteredGraph = new Dictionary<string, List<string>>(noDistinctColors); //graph after removal of k - 1 edges, contains clusters
-        static int DescendingOrder(KeyValuePair<double, string> node1, KeyValuePair<double, string> node2)
-        {
-            return node2.Key.CompareTo(node1.Key); //for descending order
-        }
-        static List<KeyValuePair<double, string>> ExtractMSTEdges()
-        {
-            List<KeyValuePair<double, string>> edges = new List<KeyValuePair<double, string>>(noDistinctColors);
-            //for loop approaches an O(V) operation, V is the number of vertices
-            List<KeyValuePair<string, KeyValuePair<string, double>>> vertices = MSTree.ToList(); //D
-            foreach (KeyValuePair<string, KeyValuePair<string, double>> node in vertices) //D
-            {
-                double distance = node.Value.Value;
-                String source = node.Key;
-                KeyValuePair<double, string> edge = new KeyValuePair<double, string>(distance, source); //1
-                edges.Add(edge);//1
-            }
-            edges.Sort(DescendingOrder);//V lg V 
-            return edges;
-        }
+        
         public static void ProduceKClusters(int k)
         {
-            List<KeyValuePair<double, string>> edges = ExtractMSTEdges(); //vlgv
+            List<KeyValuePair<double, string>> edges = MST.GetEdges(); //1
             //remove k - 1 edges to obtain k clusters 
-            //+ the first edge in graph (contains root node where MST started with no destination and distance as infinity
-            for (int i = k; i < edges.Count; ++i) //E  = V - 1 as MST
+            //mb2ash mwgod lma bn add f mst//+ the first edge in graph (contains root node where MST started with no destination and distance as infinity
+            for (int i = k - 1; i < edges.Count; ++i) //E  = V - 1 as MST
             {
                 string node1 = edges[i].Value; 
                 string node2 = MSTree[node1].Key;
@@ -69,7 +51,7 @@ namespace ImageQuantization
         }
         public static List<RGBPixel> DFS() //V + E > V
         {
-            int k = 192;
+            int k = 1737;
             ProduceKClusters(k);   
             List<RGBPixel> pallette = new List<RGBPixel>(k); // initialize the size by clus
             int clusterRed = 0, clusterGreen = 0, clusterBlue = 0;
@@ -92,7 +74,6 @@ namespace ImageQuantization
             }
             return pallette;
         }
-
         static void DFSHelper(string S, ref int clusterRed, ref int clusterGreen, ref int clusterBlue)
         {
             discovered[S] = true; //1
