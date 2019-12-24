@@ -15,19 +15,19 @@ namespace ImageQuantization
         /*All Dictionaries initialized with maxDistinctNum as it is the max no of elements that can be added 
         to the Dictionary (Dictionary capacity) to avoid O(N) complexity when adding new elements*/
         //distinctColors > Dictionary that contains MinSpanningTree
-        public static Dictionary<string, KeyValuePair<string, double>> distinctColors = new Dictionary<string, KeyValuePair<string, double>>(maxDistinctNum);
+        static Dictionary<int, KeyValuePair<int, double>> distinctColors = new Dictionary<int, KeyValuePair<int, double>>(maxDistinctNum);
         //distinctHelper > Helper Dictionary for keeping struct values concatenated as string (Key) to increase hashFunction operations
-        public static Dictionary<string, RGBPixel> distinctHelper = new Dictionary<string, RGBPixel>(maxDistinctNum);
+        static Dictionary<int, RGBPixel> distinctHelper = new Dictionary<int, RGBPixel>(maxDistinctNum);
         //visited > Dictionary to check visited nodes in MinSpnningTree
-        public static Dictionary<string, bool> visited = new Dictionary<string, bool>(maxDistinctNum);
+        public static Dictionary<int, bool> visited = new Dictionary<int, bool>(maxDistinctNum);
 
         //
-        static KeyValuePair<string, KeyValuePair<string, double>> minVertix;
-        static string color;
-        public static List<KeyValuePair<double, string>> edges = new List<KeyValuePair<double, string>>(noDistinctColors); // all edges in graph
+        static KeyValuePair<int, KeyValuePair<int, double>> minVertix;
+        static int color;
+        static List<KeyValuePair<double, int>> edges = new List<KeyValuePair<double, int>>(noDistinctColors); // all edges in graph
         //
-        public static int noDistinctColors = 0; //actual no of distinct colors, calculated in GetDistinctColors() function
-        public static double MST_Sum = 0;
+        static int noDistinctColors = 0; //actual no of distinct colors, calculated in GetDistinctColors() function
+        static double MST_Sum = 0;
 
         /// <summary>
         /// Gets all DistinctColors from 2D array and fills Dictionary of MST with all of them
@@ -44,15 +44,13 @@ namespace ImageQuantization
                 for (int j = 0; j < imageWidth; ++j)
                 {
                     RGBPixel node = Buffer[i, j]; //O(1)
-                    color = //ToString() approaches an O(1) operation
-                                  (node.red).ToString() + '+'
-                                  + (node.green).ToString() + '+'
-                                  + (node.blue).ToString();
+                    //gets unique int for each color to be used as dictionary key by using Cantor Pairing
+                    color = CantorPairing(node.red, node.green, node.blue);
                     if (!distinctHelper.ContainsKey(color)) //ContainsKey() approaches an O(1) operation
                     {
                         //Add() approaches an O(1) operation if Count is less than the capacity,
                         //guaranteed to run in O(1) as map is initialized with max capacity
-                        distinctColors.Add(color, new KeyValuePair<string, double>("", double.MaxValue));  //node initialized with max distance
+                        distinctColors.Add(color, new KeyValuePair<int, double>(0, double.MaxValue));  //node initialized with max distance
                         distinctHelper.Add(color, node);
                         visited.Add(color, false); //node initially not visited
 
@@ -61,7 +59,7 @@ namespace ImageQuantization
                 }
             }
             //to avoid using Dic.First(), Vertex to start MST from is generated here
-            minVertix = new KeyValuePair<string, KeyValuePair<string, double>>(color, new KeyValuePair<string, double>("", double.MaxValue));
+            minVertix = new KeyValuePair<int, KeyValuePair<int, double>>(color, new KeyValuePair<int, double>(0, double.MaxValue));
             return noDistinctColors; //O(1)
         }
 
@@ -75,16 +73,16 @@ namespace ImageQuantization
         public static double FindMinimumSpanningTree()
         {
             //
-            string v; 
+            int v; 
             double minEdge;
-            KeyValuePair<string, double> edge = new KeyValuePair<string, double>();
+            KeyValuePair<int, double> edge = new KeyValuePair<int, double>();
             //
             //the minimum node by which we start calculating min from,
             //initialized with source vertix where we start MST from
             //minVertix = distinctColors.First(); //O(1)
 
             //currentMin >  to get the minimum vertix at each iteration
-            KeyValuePair<string, KeyValuePair<string, double>> currentMin = new KeyValuePair<string, KeyValuePair<string, double>>();
+            KeyValuePair<int, KeyValuePair<int, double>> currentMin = new KeyValuePair<int, KeyValuePair<int, double>>();
             RGBPixel nodeColor, minVertexColor;
             //Outer for loop approaches an O(V) operation, V is the number of vertices,
             //each iteration we relax a vertix
@@ -96,10 +94,10 @@ namespace ImageQuantization
 
                 //ToList() > Converts distinctColors Dictionary to List to be able to iterate over it,
                 //approaches an O(V) operation, V is the number of vertices
-                List<KeyValuePair<string, KeyValuePair<string, double>>> vertices = distinctColors.ToList();
+                List<KeyValuePair<int, KeyValuePair<int, double>>> vertices = distinctColors.ToList();
 
                 //Inner for loop approaches an O(V) operation, V is the number of vertices
-                foreach (KeyValuePair<string, KeyValuePair<string, double>> node in vertices)
+                foreach (KeyValuePair<int, KeyValuePair<int, double>> node in vertices)
                 {
                     nodeColor = distinctHelper[node.Key];
                     minVertexColor = distinctHelper[minVertix.Key];
@@ -122,7 +120,7 @@ namespace ImageQuantization
                     //update distance value if less distance is calculated
                     if (edge.Value > distance)
                     {
-                        distinctColors[node.Key] = new KeyValuePair<string, double>(minVertix.Key, distance);
+                        distinctColors[node.Key] = new KeyValuePair<int, double>(minVertix.Key, distance);
                     }
                     //finding current min in inner loop relative to chosen vertex in outer loop
                     if (distinctColors[node.Key].Value < minEdge)
@@ -132,28 +130,34 @@ namespace ImageQuantization
                     }
                 }
                 minVertix = currentMin;
-                KeyValuePair<double, string> MSTEdge = new KeyValuePair<double, string>(minEdge, minVertix.Key);//1
+                KeyValuePair<double, int> MSTEdge = new KeyValuePair<double, int>(minEdge, minVertix.Key);//1
                 edges.Add(MSTEdge);//1
                 MST_Sum += minEdge;
             }
             edges.Sort(DescendingOrder); //V lg V
             return MST_Sum; //O(1)
         }
-        static int DescendingOrder(KeyValuePair<double, string> node1, KeyValuePair<double, string> node2)
+        static int DescendingOrder(KeyValuePair<double, int> node1, KeyValuePair<double, int> node2)
         {
             return node2.Key.CompareTo(node1.Key); //for descending order
         }
-        public static List<KeyValuePair<double, string>> GetEdges()
+        public static List<KeyValuePair<double, int>> GetEdges()
         {
             return edges;
         }
-        public static Dictionary<string, KeyValuePair<string, double>> GetMST()
+        public static Dictionary<int, KeyValuePair<int, double>> GetMST()
         {
             return distinctColors;
         }
-        public static Dictionary<string, RGBPixel> GetMSTHelper()
+        public static Dictionary<int, RGBPixel> GetMSTHelper()
         {
             return distinctHelper;
+        }
+        static int CantorPairing(int x, int y, int z)
+        {
+            int res1 = (((x + y) * (x + y + 1)) / 2) + y;
+            int res2 = (((res1 + z) * (res1 + z + 1)) / 2) + z;
+            return res2;
         }
 
         public static RGBPixel[,] dispImage() //n squared //size of image
@@ -166,10 +170,8 @@ namespace ImageQuantization
                 //Inner for loop approaches an O(N) operation, N is the image width
                 for (int j = 0; j < imageWidth; ++j)
                 {
-                    string color = //ToString() approaches an O(1) operation
-                                  (Buffer[i, j].red).ToString() + '+'
-                                  + (Buffer[i, j].green).ToString() + '+'
-                                  + (Buffer[i, j].blue).ToString();
+                    RGBPixel node = Buffer[i, j]; //O(1)
+                    int color = CantorPairing(node.red, node.green, node.blue);
                     RGBPixel newColor = Clustering.represntativeColor[color];
                     modifiedImage[i, j] = newColor;
                 }
