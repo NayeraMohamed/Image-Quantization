@@ -7,20 +7,16 @@ namespace ImageQuantization
 {
     class Clustering
     {
-        static int noDistinctColors = MST.FindDistinctColors();
-        static double MST_Sum = MST.FindMinimumSpanningTree();
-        static Dictionary<int, KeyValuePair<int, double>> MSTree = MST.GetMST();
-        static Dictionary<int, RGBPixel> MSTHelper = MST.GetMSTHelper();
-        public static Dictionary<int, RGBPixel> represntativeColor = new Dictionary<int, RGBPixel>(noDistinctColors);//each original color as key and value as rep color ofeach cluster
-
-        // To be seen by DFS and DFSHelper fn
-        static Stack<int> clusterColors = new Stack<int>(noDistinctColors); //for holding nodes in each cluster separately in dfs
-        static Dictionary<int, bool> discovered = MST.visited; //to check in dfs if node was visited
-        static Dictionary<int, List<int>> clusteredGraph = new Dictionary<int, List<int>>(noDistinctColors); //graph after removal of k - 1 edges, contains clusters
-        
-        public static void ProduceKClusters(int k)
+        static Dictionary<int, bool> discovered;
+        static Dictionary<int, List<int>> clusteredGraph;
+        static int nDistinctColors;
+        static Stack<int> clusterColors = new Stack<int>(nDistinctColors);
+        static Dictionary<int, RGBPixel> MSTHelper;  
+        public static Dictionary<int, List<int>> ProduceKClusters(int k, List<KeyValuePair<double, int>> edges, Dictionary<int, KeyValuePair<int, double>> MSTree, int maxDistinctColors, Dictionary<int, bool> visited)
         {
-            List<KeyValuePair<double, int>> edges = MST.GetEdges(); //1
+            discovered = visited;
+            nDistinctColors = maxDistinctColors;
+            Dictionary<int, List<int>> clusteredGraph = new Dictionary<int, List<int>>(maxDistinctColors);
             //remove k - 1 edges to obtain k clusters 
             //mb2ash mwgod lma bn add f mst//+ the first edge in graph (contains root node where MST started with no destination and distance as infinity
             for (int i = k - 1; i < edges.Count; ++i) //E  = V - 1 as MST
@@ -29,33 +25,42 @@ namespace ImageQuantization
                 int node2 = MSTree[node1].Key;
                 if (!clusteredGraph.ContainsKey(node1))//1
                 {
-                    clusteredGraph.Add(node1, new List<int>(noDistinctColors)); //1             
+                    clusteredGraph.Add(node1, new List<int>(maxDistinctColors)); //1      
+                    discovered[node1] = false;
                 }
                 if (!clusteredGraph.ContainsKey(node2))//1
                 {
-                    clusteredGraph.Add(node2, new List<int>(noDistinctColors));//1
+                    clusteredGraph.Add(node2, new List<int>(maxDistinctColors));//1
+                    discovered[node2] = false;
                 }
                 clusteredGraph[node1].Add(node2);//1
                 clusteredGraph[node2].Add(node1);//1
             }
-            //loop on dic that has all nodes to make sure all nodes are included in clustGraph
+            //loop on removed edges to make sure all nodes are included in clustGraph
             //clusters that contain only one node are discovered here
-            List<KeyValuePair<int, RGBPixel>> vertices = MSTHelper.ToList();
-            foreach (KeyValuePair<int, RGBPixel> node in vertices)
+            for (int i = 0; i < k; ++i) //K
             {
-                if (!clusteredGraph.ContainsKey(node.Key))//1
+                int node1 = edges[i].Value;
+                int node2 = MSTree[node1].Key;
+                if (!clusteredGraph.ContainsKey(node1))//1
                 {
-                    clusteredGraph.Add(node.Key, new List<int>(0));  //1  //size = zero as it forms a cluster by itself with no other nodes           
+                    clusteredGraph.Add(node1, new List<int>(maxDistinctColors)); //1 
+                    discovered[node1] = false;
+                }
+                if (!clusteredGraph.ContainsKey(node2) && node2 != 0)//1
+                {
+                    clusteredGraph.Add(node2, new List<int>(maxDistinctColors));//1
+                    discovered[node2] = false;
                 }
             }
+            return clusteredGraph;
         }
-        public static List<RGBPixel> DFS() //V + E > V
+        public static List<RGBPixel> DFS(Dictionary<int, List<int>> clusteredGraphh, Dictionary<int, bool> discovered, int maxDistinctColors, int k, ref Dictionary<int, RGBPixel> represntativeColor, Dictionary<int, RGBPixel> distinctHelper) //V + E > V
         {
-            int k = 25666;
-            ProduceKClusters(k);   
+            clusteredGraph = clusteredGraphh;
+            MSTHelper = distinctHelper;
             List<RGBPixel> pallette = new List<RGBPixel>(k); // initialize the size by clus
             int clusterRed = 0, clusterGreen = 0, clusterBlue = 0;
-            MarkAllNodesUnDiscovered();
             // traversing each cluster
             List<KeyValuePair<int, List<int>>> clusters = clusteredGraph.ToList(); //o clusters size, D
             foreach (KeyValuePair<int, List<int>> vertex in clusters) //E+V //V
@@ -64,8 +69,9 @@ namespace ImageQuantization
                 {
                     clusterRed = clusterGreen = clusterBlue = 0;
                     DFSHelper(vertex.Key, ref clusterRed, ref clusterGreen, ref clusterBlue);
-                    RGBPixel newColor = paletteGeneration(clusterRed, clusterGreen, clusterBlue, ref pallette);
-                    FindRepresentativeColor(newColor);
+                    int clusterNodesCount = clusterColors.Count;
+                    RGBPixel newColor = paletteGeneration(clusterRed, clusterGreen, clusterBlue, ref pallette, clusterNodesCount);
+                    FindRepresentativeColor(newColor, ref represntativeColor);
                 }
                 else
                 {
@@ -100,23 +106,7 @@ namespace ImageQuantization
             clusterGreen += green;
             clusterBlue += blue;
         }
-        /// <summary>
-        /// initialization of the discovered list by false
-        /// </summary>
-        /// <param name="S"></param>
-        /// <param name="clusterRed"></param>
-        /// <param name="clusterGreen"></param>
-        /// <param name="clusterBlue"></param>
-        static void MarkAllNodesUnDiscovered() //1
-        {
-            List<KeyValuePair<int, List<int>>> clusters = clusteredGraph.ToList();
-            foreach (KeyValuePair<int, List<int>> node in clusters) //D
-            {
-                int key = node.Key;
-                discovered[key] = false; //o1
-            }
-        }
-        static void FindRepresentativeColor(RGBPixel newColor) //max D
+        static void FindRepresentativeColor(RGBPixel newColor, ref Dictionary<int, RGBPixel> represntativeColor) //max D
         {
             while (clusterColors.Count != 0)
             {
@@ -124,10 +114,9 @@ namespace ImageQuantization
                 represntativeColor.Add(basicColor, newColor); //o1            
             }
         }
-        static RGBPixel paletteGeneration(int clusterRed, int clusterGreen, int clusterBlue, ref List<RGBPixel> pallette) //1
+        static RGBPixel paletteGeneration(int clusterRed, int clusterGreen, int clusterBlue, ref List<RGBPixel> pallette, int clusterNodesCount) //1
         {
-            RGBPixel newColor;
-            int clusterNodesCount = clusterColors.Count;  // indicates # Distinct colors in this cluster 
+            RGBPixel newColor; 
             newColor.red = (byte)(clusterRed / clusterNodesCount); //1
             newColor.blue = (byte)(clusterBlue / clusterNodesCount); //1
             newColor.green = (byte)(clusterGreen / clusterNodesCount); //1
