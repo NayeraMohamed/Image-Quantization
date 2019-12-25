@@ -5,3 +5,14 @@ D:\College\Junior\First Semster\Algorithms\Project\Image Quantization Startup Co
 D:\College\Junior\First Semster\Algorithms\Project\Image Quantization Startup Code\[TEMPLATE] ImageQuantization\ImageQuantization\obj\Release\ImageQuantization.csproj.GenerateResource.Cache
 D:\College\Junior\First Semster\Algorithms\Project\Image Quantization Startup Code\[TEMPLATE] ImageQuantization\ImageQuantization\obj\Release\ImageQuantization.exe
 D:\College\Junior\First Semster\Algorithms\Project\Image Quantization Startup Code\[TEMPLATE] ImageQuantization\ImageQuantization\obj\Release\ImageQuantization.pdb
+D:\College\Junior\First Semster\Algorithms\Project\Image Quantization Startup Code\[TEMPLATE] ImageQuantization\ImageQuantization\obj\Release\ImageQuantization.csprojResolveAssemblyReference.cache
+F:\[TEMPLATE] ImageQuantization\ImageQuantization\obj\Release\ImageQuantization.exe
+F:\[TEMPLATE] ImageQuantization\ImageQuantization\obj\Release\ImageQuantization.pdb
+D:\Uni\Third Year\Algorithm\Project\Final\[TEMPLATE] ImageQuantization\ImageQuantization\obj\Release\ImageQuantization.exe
+D:\Uni\Third Year\Algorithm\Project\Final\[TEMPLATE] ImageQuantization\ImageQuantization\obj\Release\ImageQuantization.pdb
+D:\Uni\Third Year\Algorithm\Project\Final\[TEMPLATE] ImageQuantization\ImageQuantization\bin\Release\ImageQuantization.exe
+D:\Uni\Third Year\Algorithm\Project\Final\[TEMPLATE] ImageQuantization\ImageQuantization\bin\Release\ImageQuantization.pdb
+D:\Uni\Third Year\Algorithm\Project\Final\[TEMPLATE] ImageQuantization\ImageQuantization\obj\Release\ImageQuantization.csprojResolveAssemblyReference.cache
+D:\Uni\Third Year\Algorithm\Project\Final\[TEMPLATE] ImageQuantization\ImageQuantization\obj\Release\ImageQuantization.MainForm.resources
+D:\Uni\Third Year\Algorithm\Project\Final\[TEMPLATE] ImageQuantization\ImageQuantization\obj\Release\ImageQuantization.Properties.Resources.resources
+D:\Uni\Third Year\Algorithm\Project\Final\[TEMPLATE] ImageQuantization\ImageQuantization\obj\Release\ImageQuantization.csproj.GenerateResource.Cache
